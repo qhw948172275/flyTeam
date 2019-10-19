@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>   
+
+
+    <context id="baseset"  targetRuntime="MyBatis3Simple" defaultModelType="flat">
+        <!-- 根据Mapper生成实体类,xml文件 -->
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="com.cdyykj.system.commons.service.MyMapper"/>
+        </plugin>
+        <!-- 连接字符串 -->
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                            connectionURL="jdbc:mysql://127.0.0.1/xzhk?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false&amp;serverTimezone=GMT%2B8"
+                            userId="root"
+                            password="123456">
+            </jdbcConnection>
+
+        <!-- 指定生成“entity实体类、mybatis映射xml文件、mapper接口”的具体位置 -->   
+         <javaModelGenerator targetPackage="com.cdyykj.xzhk.entity" targetProject="src/main/java" >
+            <property name="enableSubPackages" value="true"/>  
+            <property name="trimStrings" value="true"/>  
+        </javaModelGenerator>  
+
+        <sqlMapGenerator targetPackage="com.cdyykj.xzhk.dao" targetProject="src/main/java" >
+            <property name="enableSubPackages" value="true"/>  
+        </sqlMapGenerator>  
+
+        <javaClientGenerator targetPackage="com.cdyykj.xzhk.dao" targetProject="src/main/java" type="XMLMAPPER" >
+            <property name="enableSubPackages" value="true"/>  
+        </javaClientGenerator>
+
+
+         <!--具体要生成的表，如果有多个表，复制这一段，改下表名即可-->
+
+        	<table tableName="r_test_system_member" domainObjectName="RTestSystemMember" enableCountByExample="false" enableUpdateByExample="false"
+        	enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        		<generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        	</table>
+
+        	<!--<table tableName="r_department_member" domainObjectName="RDepartmentMember" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+
+        	<!--<table tableName="r_member_article" domainObjectName="MemberArticle" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="r_test_system_question_brank" domainObjectName="TestSystemQuestionBrank" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_department" domainObjectName="Department" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_department_member" domainObjectName="DepartmentMember" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_do_record" domainObjectName="DoRecord" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_do_record_detail" domainObjectName="DoRecordDetail" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_flight_report" domainObjectName="FlightReport" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_question_bank" domainObjectName="QuestionBank" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_test_system" domainObjectName="TestSystem" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_parent" domainObjectName="Parent" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_school" domainObjectName="School" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_student" domainObjectName="Student" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_student_audition" domainObjectName="StudentAudition" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_sys_resource" domainObjectName="SysResource" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_sys_role" domainObjectName="SysRole" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+
+        	<!--<table tableName="t_time_card_log" domainObjectName="TimeCardLog" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_time_card_log_detail" domainObjectName="TimeCardLogDetail" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_time_table" domainObjectName="TimeTable" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+    </context>
+        	<!--<table tableName="t_subject" domainObjectName="Subject" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+        	<!--<table tableName="t_version" domainObjectName="Version" enableCountByExample="false" enableUpdateByExample="false"-->
+        	<!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+        		<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        	<!--</table>-->
+
+ 		<!--<table tableName="t_sys_message" domainObjectName="SysMessage" enableCountByExample="false" enableUpdateByExample="false"-->
+ 			   <!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+ 			<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+ 		<!--</table>-->
+ 		<!--<table tableName="t_dynamics" domainObjectName="Dynamics" enableCountByExample="false" enableUpdateByExample="false"-->
+ 			   <!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+ 			<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+ 		<!--</table>-->
+		<!---->
+		<!--<table tableName="r_dynamic_user" domainObjectName="DynamicUser" enableCountByExample="false" enableUpdateByExample="false"-->
+			   <!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+			<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+		<!--</table>-->
+		<!--<table tableName="t_school_job" domainObjectName="SchoolJob" enableCountByExample="false" enableUpdateByExample="false"-->
+			   <!--enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">-->
+			<!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+		<!--</table>-->
+        	
+        
+
+</generatorConfiguration>

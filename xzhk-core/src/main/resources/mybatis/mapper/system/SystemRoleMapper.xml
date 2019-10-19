@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyykj.system.dao.SystemRoleMapper">
+	<resultMap id="BaseResultMap" type="com.cdyykj.system.entity.SystemRole">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="createtime" jdbcType="BIGINT" property="createtime" />
+    <result column="last_update_creator" jdbcType="VARCHAR" property="lastUpdateCreator" />
+    <result column="last_update_createtime" jdbcType="BIGINT" property="lastUpdateCreatetime" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="school_id" jdbcType="INTEGER" property="schoolId" />
+  </resultMap>
+	<select id="getRoleByUserId" resultMap="BaseResultMap"
+		parameterType="int">
+		select
+		 * 
+		from t_sys_role
+		where 
+			t_sys_role.id in (
+				select 
+					role_id 
+				from
+				r_sys_role_user
+				where 
+					r_sys_role_user.uid=#{uid}
+				)
+		    and t_sys_role.status = 0
+	</select>
+
+
+	<select id="selectResourceListByRoleIdList" resultType="com.cdyykj.system.entity.SystemResource"
+            parameterType="java.lang.Integer">
+        SELECT
+            DISTINCT s.id AS id,
+            s.resource_name AS 'resourceName',
+            s.resource_url AS resourceUrl,
+            s.is_basic AS isBasic,
+            s.parent_id AS parentId,
+            s.level AS level,
+            s.remark AS remark,
+            s.status AS 'status',
+            s.resource_kind AS resourceKind,
+            s.resource_type as resourceType,
+            s.seq AS seq,
+            s.open_mode AS openMode,
+            s.opened AS opened,
+            s.icon AS icon
+        FROM
+            t_sys_role r
+        LEFT JOIN r_sys_role_resource e ON r.id = e.role_id
+        LEFT JOIN t_sys_resource s ON e.resource_id = s.id
+        WHERE
+            r.id in  
+            <foreach item="item" index="index" collection="list" open="(" separator="," close=")">  
+                #{item}
+            </foreach>
+        AND s.resource_type = 0
+        AND s.status = 0
+        AND s.parent_id != -1
+        ORDER BY seq
+    </select>
+    <resultMap id="roleUserResponse" type="com.cdyykj.system.response.RoleUserResponse">
+        <result property="id" column="id"/>
+        <result property="name" column="roleName"/>
+        <collection property="userList" ofType="com.cdyykj.system.entity.SystemUser">
+            <result property="id" column="userId"/>
+            <result property="name" column="userName"/>
+        </collection>
+    </resultMap>
+    <select id="selectRoleUserResponseBySchoolId" resultMap="roleUserResponse">
+          SELECT
+	tsr.id,
+	tsr.role_name roleName,
+	tsu.id userId,
+	tsu.`real_name` userName
+FROM
+	t_sys_role tsr
+	LEFT JOIN r_sys_role_user rsru ON tsr.id = rsru.role_id
+	LEFT JOIN t_sys_user tsu ON tsu.id = rsru.uid
+WHERE
+tsu.id is not null
+and
+	rsru.school_id = #{schoolId}
+    </select>
+    <select id="selectByUserId" resultType="com.cdyykj.system.entity.SystemRole">
+        SELECT
+	*
+FROM
+	r_sys_role_user rsru
+	LEFT JOIN t_sys_role tsr ON tsr.id = rsru.role_id
+WHERE
+	tsr.`status` = #{status}
+
+	AND rsru.uid = #{userId}
+    </select>
+</mapper>

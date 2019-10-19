@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdyykj.xzhk.dao.RTestSystemMemberMapper" >
+  <resultMap id="BaseResultMap" type="com.cdyykj.xzhk.entity.RTestSystemMember" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="test_system_id" property="testSystemId" jdbcType="INTEGER" />
+    <result column="member_id" property="memberId" jdbcType="INTEGER" />
+  </resultMap>
+  <select id="selectMemberByTestSystemId" resultType="com.cdyykj.xzhk.response.MemberResponse">
+SELECT
+	tdm.id,
+	tdm.`name`,
+	tdm.mobile
+FROM
+	r_test_system_member rtsm
+	LEFT JOIN t_department_member tdm ON rtsm.member_id = tdm.id
+WHERE
+	rtsm.test_system_id =#{testSystemId}
+  </select>
+</mapper>

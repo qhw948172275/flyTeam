@@ -1,0 +1,1 @@
+ALTER TABLE `xzhk`.`r_test_system_member` DROP FOREIGN KEY `fk_r_test_system_member_id`;

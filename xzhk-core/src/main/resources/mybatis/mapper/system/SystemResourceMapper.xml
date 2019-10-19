@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyykj.system.dao.SystemResourceMapper">
+	<resultMap id="BaseResultMap" type="com.cdyykj.system.entity.SystemResource">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="resource_name" jdbcType="VARCHAR" property="resourceName" />
+    <result column="resource_url" jdbcType="VARCHAR" property="resourceUrl" />
+    <result column="is_basic" jdbcType="INTEGER" property="isBasic" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="level" jdbcType="INTEGER" property="level" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="param1" jdbcType="VARCHAR" property="param1" />
+    <result column="param2" jdbcType="VARCHAR" property="param2" />
+    <result column="param3" jdbcType="VARCHAR" property="param3" />
+    <result column="param4" jdbcType="VARCHAR" property="param4" />
+    <result column="param5" jdbcType="VARCHAR" property="param5" />
+  </resultMap>
+<!-- 	<select id="getResourceListByRid" resultMap="BaseResultMap" -->
+<!-- 		parameterType="cn.hlhdj.duoji.entity.system.SystemRoleResourceExample"> -->
+<!-- 		select distinct * from t_sys_resource -->
+<!-- 		where status=0 and resource.id in -->
+<!-- 		(select -->
+<!-- 		r_sys_role_resource.resource_id from r_sys_role_resource -->
+<!-- 		<include refid="Example_Where_Clause" /> -->
+<!-- 		) order by t_sys_resource.id asc -->
+<!-- 	</select> -->
+	
+	<select id="getResourceListByRid" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select 
+			* 
+		from t_sys_resource
+		where 
+			status=0 
+			and t_sys_resource.id in (select r_sys_role_resource.resource_id from r_sys_role_resource 
+						where r_sys_role_resource.role_id = #{rid}
+			) 
+		order by t_sys_resource.id asc
+	</select>
+	
+	<select id="getResourceListByRidIn" resultMap="BaseResultMap" parameterType="java.util.List">
+		select 
+			* 
+		from t_sys_resource
+		where 
+			status=0 
+			and t_sys_resource.id in (select r_sys_role_resource.resource_id from r_sys_role_resource 
+						where r_sys_role_resource.role_id in 
+						<foreach collection="rids" item="listItem"
+							open="(" close=")" separator=",">
+							#{listItem}
+						</foreach>
+			) 
+		order by t_sys_resource.id asc
+	</select>
+	<select id="selectByUserId" resultType="com.cdyykj.system.entity.SystemResource">
+	  select tsrc.* from t_sys_role tsr
+      left join r_sys_role_resource rsrr on tsr.id=rsrr.role_id
+      left join t_sys_resource tsrc on tsrc.id=rsrr.resource_id
+      where EXISTS (select 0 from (
+      select tsr2.id tsssrr from t_sys_user tsu
+      left join r_sys_role_user rssu on tsu.id=rssu.uid
+      left join t_sys_role tsr2 on tsr2.id=rssu.role_id
+      where tsu.id=#{userId}
+      ) rrr where tsr.id=rrr.tsssrr )
+      and tsrc.id is not null
+      group by tsrc.id
+      order by tsrc.seq
+	</select>
+	<select id="selectResourceByRoleId" resultType="java.lang.Integer">
+		SELECT rsrr.resource_id  FROM `r_sys_role_resource` rsrr
+where rsrr.role_id=#{roleId}
+	</select>
+</mapper>

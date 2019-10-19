@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdyykj.xzhk.dao.TestSystemMapper" >
+  <resultMap id="BaseResultMap" type="com.cdyykj.xzhk.entity.TestSystem" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="push_time" property="pushTime" jdbcType="TIMESTAMP" />
+    <result column="receive_number" property="receiveNumber" jdbcType="INTEGER" />
+    <result column="qualified_number" property="qualifiedNumber" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="question_count" property="questionCount" jdbcType="TINYINT" />
+  </resultMap>
+  <select id="selectTestSystemResponse"  resultType="com.cdyykj.xzhk.response.TestSystemResponse">
+select * from (SELECT
+	tts.*,
+	1 is_test ,
+	tsu.real_name publisher,
+	rtsm.is_pass isPass,
+	tott.marks memberMarks,
+	tdm.name memberName
+FROM
+	t_test_system tts
+	LEFT JOIN r_test_system_member rtsm ON rtsm.test_system_id = tts.id
+	left join t_sys_user tsu on tsu.id=tts.create_id
+	left join (	 select  DISTINCT tt.member_id,tt.marks,tt.right_count,tt.error_count,tt.test_system_id  from t_do_record  tt )
+   tott on tott.test_system_id=tts.id
+	left join t_department_member tdm on tdm.id=tott.member_id
+WHERE
+	rtsm.member_id =#{memberId}
+	and rtsm.is_test=1
+	and tott.member_id=#{memberId}
+  and tts.status =1
+	 UNION all
+		SELECT
+	tts.*,
+	 0  is_test ,
+	tsu.real_name publisher,
+	rtsm.is_pass isPass,
+	0 memberMarks,
+	tdm.name memberName
+  FROM
+	t_test_system tts
+	LEFT JOIN r_test_system_member rtsm ON rtsm.test_system_id = tts.id
+	left join t_sys_user tsu on tsu.id=tts.create_id
+	left join t_department_member tdm on tdm.id=rtsm.member_id
+	where rtsm.member_id=#{memberId}
+	and 	rtsm.is_test=0
+	and tts.status =1
+	) tttt
+	ORDER BY tttt.id desc
+  </select>
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdyykj.xzhk.dao.ArticleMapper" >
+  <resultMap id="BaseResultMap" type="com.cdyykj.xzhk.entity.Article" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="send_status" property="sendStatus" jdbcType="TINYINT" />
+    <result column="cover" property="cover" jdbcType="VARCHAR" />
+    <result column="click_count" property="clickCount" jdbcType="BIGINT" />
+    <result column="read_success_rate" property="readSuccessRate" jdbcType="DOUBLE" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="shzre_set" property="shzreSet" jdbcType="TINYINT" />
+    <result column="summary" property="summary" jdbcType="VARCHAR" />
+    <result column="author" property="author" jdbcType="VARCHAR" />
+    <result column="receive_number" property="receiveNumber" jdbcType="INTEGER" />
+    <result column="create_id" property="createId" jdbcType="INTEGER" />
+    <result column="send_type" property="sendType" jdbcType="TINYINT" />
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+    <result column="send_time" property="sendTime" jdbcType="LONGVARCHAR" />
+    <result column="read_time" property="readTime" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <select id="selectByKeyword"  resultType="com.cdyykj.xzhk.entity.Article">
+    select * from t_article ta
+    where ta.status=0
+    <if test="keyword !=null">
+     and  (ta.title like #{keyword} or ta.id=#{keyword})
+    </if>
+    <if test="dateStr !=null">
+      and  date_format(ta.create_time,'%Y-%m-%d') =#{dateStr}
+    </if>
+    order by create_time desc
+  </select>
+<select id="selectArticleResponse" resultType="com.cdyykj.xzhk.response.ArticleResponse">
+SELECT
+	ta.*,
+	rma.start_read_time,
+	rma.end_read_time,
+	rma.is_read_success
+FROM
+	t_article ta
+	LEFT JOIN r_member_article rma ON rma.article = ta.id
+WHERE
+	rma.member_id=#{memberId}
+	and ta.status =0
+	and ta.send_status=1
+	order by ta.create_time desc
+</select>
+
+  <resultMap id="artAnnMap" type="com.cdyykj.xzhk.response.ArticleMemberResponse">
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="send_status" property="sendStatus" jdbcType="TINYINT" />
+    <result column="cover" property="cover" jdbcType="VARCHAR" />
+    <result column="click_count" property="clickCount" jdbcType="BIGINT" />
+    <result column="read_success_rate" property="readSuccessRate" jdbcType="DOUBLE" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="shzre_set" property="shzreSet" jdbcType="TINYINT" />
+    <result column="summary" property="summary" jdbcType="VARCHAR" />
+    <result column="author" property="author" jdbcType="VARCHAR" />
+    <result column="receive_number" property="receiveNumber" jdbcType="INTEGER" />
+    <result column="create_id" property="createId" jdbcType="INTEGER" />
+    <result column="send_type" property="sendType" jdbcType="TINYINT" />
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+    <result column="send_time" property="sendTime" jdbcType="LONGVARCHAR" />
+    <result column="read_time" property="readTime" jdbcType="LONGVARCHAR" />
+    <collection property="annexManages" ofType="com.cdyykj.xzhk.entity.AnnexManage">
+      <id column="annexId" property="id" jdbcType="INTEGER" />
+      <result column="url" property="url" jdbcType="VARCHAR" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="size" property="size"/>
+    </collection>
+  </resultMap>
+  <select id="selectArticleMemberResponse" resultMap="artAnnMap">
+    SELECT
+	ta.*,
+	tam.`name`,
+	tam.url,
+	tam.size,
+	tam.id annexId
+FROM
+	t_article ta
+	left join r_annex_apply raa on raa.apply_id=ta.id
+	LEFT JOIN t_annex_manage tam ON tam.id =raa.annex_id
+WHERE
+     ta.id=#{articleId}
+     and  ( raa.type=0 or raa.type is null)
+  </select>
+</mapper>

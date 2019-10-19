@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdyykj.xzhk.dao.FlightReportMapper" >
+  <resultMap id="BaseResultMap" type="com.cdyykj.xzhk.entity.FlightReport" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="create_id" property="createId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="input_time" property="inputTime" jdbcType="VARCHAR" />
+    <result column="flight_model" property="flightModel" jdbcType="VARCHAR" />
+    <result column="flight_number" property="flightNumber" jdbcType="VARCHAR" />
+    <result column="route" property="route" jdbcType="VARCHAR" />
+    <result column="left_seat_member_name" property="leftSeatMemberName" jdbcType="VARCHAR" />
+    <result column="right_seat_member_name" property="rightSeatMemberName" jdbcType="VARCHAR" />
+    <result column="weather_condition" property="weatherCondition" jdbcType="TINYINT" />
+    <result column="weather_condition_ramark" property="weatherConditionRamark" jdbcType="VARCHAR" />
+    <result column="flight_impact" property="flightImpact" jdbcType="TINYINT" />
+    <result column="event_stage" property="eventStage" jdbcType="TINYINT" />
+    <result column="event_stage_remarke" property="eventStageRemarke" jdbcType="VARCHAR" />
+    <result column="flight_fault" property="flightFault" jdbcType="VARCHAR" />
+    <result column="flight_fault_remark" property="flightFaultRemark" jdbcType="VARCHAR" />
+    <result column="is_flight_record" property="isFlightRecord" jdbcType="TINYINT" />
+    <result column="event_content" property="eventContent" jdbcType="TINYINT" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="other_member_names" property="otherMemberNames" jdbcType="LONGVARCHAR" />
+    <result column="title" property="title" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <select id="selectList" resultType="com.cdyykj.xzhk.response.FlightReportResponse">
+    SELECT
+	tfr.*,
+	tdm.NAME memberName,
+	tdm.position
+FROM
+	t_flight_report tfr
+	LEFT JOIN t_department_member tdm ON tfr.create_id = tdm.id
+WHERE
+	tfr.STATUS = 0
+	<if test="keyword !=null">
+     and ( tdm.name like #{keyword} or tdm.position like #{keyword} )
+    </if>
+    <if test="dateStr !=null">
+      and date_format(tfr.create_time,'%Y-%m-%d')=#{dateStr}
+    </if>
+ORDER BY
+	tfr.create_time DESC
+  </select>
+</mapper>

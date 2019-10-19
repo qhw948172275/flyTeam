@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdyykj.xzhk.dao.MemberArticleMapper" >
+  <resultMap id="BaseResultMap" type="com.cdyykj.xzhk.entity.MemberArticle" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="member_id" property="memberId" jdbcType="INTEGER" />
+    <result column="article" property="article" jdbcType="INTEGER" />
+    <result column="start_read_time" property="startReadTime" jdbcType="TIMESTAMP" />
+    <result column="end_read_time" property="endReadTime" jdbcType="TIMESTAMP" />
+    <result column="is_read_success" property="isReadSuccess" jdbcType="TINYINT" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <select id="selectMemberResponseByArticleId" resultType="com.cdyykj.xzhk.response.MemberResponse">
+    SELECT
+	 rma.member_id id, tdm.name,tdm.mobile
+FROM
+	r_member_article rma
+	LEFT JOIN  t_department_member tdm ON tdm.id = rma.member_id
+WHERE
+	rma.article=#{articleId}
+  </select>
+
+    <select id="selectMemberReadDetailResponse" resultType="com.cdyykj.xzhk.response.MemberReadDetailResponse">
+     select * from (
+        SELECT
+        rma.*,
+        GROUP_CONCAT( td.`name` ) departmentName,
+        tdm.NAME memberName
+        FROM
+        r_member_article rma
+        LEFT JOIN t_department_member tdm on  rma.member_id = tdm.id
+        LEFT JOIN r_department_member rdm ON rdm.member_id = tdm.id
+        LEFT JOIN t_department td ON td.id = rdm.department_id
+        where rma.article=#{articleId}
+        group by tdm.id
+        ) ttt
+        where 1=1
+	<if test="keyword !=null">
+      and (ttt.memberName like #{keyword} or ttt.`departmentName` like #{keyword} )
+    </if>
+
+    </select>
+
+    <select id="selectMemberReadDetailResponseOutPut" resultType="com.cdyykj.xzhk.response.MemberReadDetailResponse">
+         SELECT
+        rma.*,
+        GROUP_CONCAT( td.`name` ) departmentName,
+        tdm.NAME memberName
+        FROM
+        r_member_article rma
+        LEFT JOIN t_department_member tdm on  rma.member_id = tdm.id
+        LEFT JOIN r_department_member rdm ON rdm.member_id = tdm.id
+        LEFT JOIN t_department td ON td.id = rdm.department_id
+        where rma.id in
+        <foreach collection="idIs" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        group by tdm.id
+    </select>
+</mapper>

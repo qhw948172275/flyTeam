@@ -1,0 +1,1 @@
+ALTER TABLE `xzhk`.`t_annex_manage` DROP FOREIGN KEY `fk_t_annex_t_article`;

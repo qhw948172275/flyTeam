@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdyykj.system.dao.SystemUserMapper">
+	<resultMap id="userMap" type="com.cdyykj.system.entity.SystemUser">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="createtime" jdbcType="BIGINT" property="createtime" />
+    <result column="login_Times" jdbcType="INTEGER" property="loginTimes" />
+    <result column="last_Login_Time" jdbcType="BIGINT" property="lastLoginTime" />
+    <result column="last_Login_Ip" jdbcType="VARCHAR" property="lastLoginIp" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="school_id" jdbcType="INTEGER" property="schoolId" />
+  </resultMap>
+
+	<select id="getUserEntityListInRid" resultMap="userMap"
+		parameterType="map">
+		select * from t_sys_user where id in (select
+		distinct
+		r_sys_role_user.uid from
+		r_sys_role_user where
+		r_sys_role_user.role_id=#{roleid})
+	</select>
+	<select id="getUsersListInRids" resultMap="userMap"
+		parameterType="map">
+		select * from t_sys_user where id in (select
+		distinct
+		r_sys_role_user.uid from
+		r_sys_role_user where
+		r_sys_role_user.role_id in (
+		<foreach collection="roleList" item="rid" index="index"
+			separator=",">
+			<trim suffixOverrides=",">
+				#{rid,jdbcType=INTEGER}
+			</trim>
+		</foreach>
+		))
+		<if test="limitFrom!=null &amp;&amp; limitTo != null">
+			<![CDATA[ limit #{limitFrom},#{limitTo}]]>
+		</if>
+	</select>
+	<select id="getUserEntityListNotInRid" resultMap="userMap"
+		parameterType="map">
+		select u.id as id,u.name as name,u.password as
+		password,u.real_name as
+		realName,u.status as
+		status
+		,u.creator as
+		creator,u.create_time as
+		createTime,u.login_Times as
+		login_Times,u.last_Login_Ip as
+		last_Login_Ip,u.last_Login_Time as
+		last_Login_Time,u.phone as phone from t_sys_user u where u.status=0 and u.id
+		not
+		in (select
+		r_sys_role_user.uid
+		from r_sys_role_user where
+		r_sys_role_user.role_id=#{roleid})
+	</select>
+	<select id="getUserCountInRids" resultType="int">
+		select count(*) from t_sys_user where id in (select
+		distinct
+		r_sys_role_user.uid
+		from
+		r_sys_role_user where
+		r_sys_role_user.role_id in (
+		<foreach collection="roleList" item="rid" index="index"
+			separator=",">
+			<trim suffixOverrides=",">
+				#{rid,jdbcType=INTEGER}
+			</trim>
+		</foreach>
+		))
+		<if test="userName != null">
+			<![CDATA[ name like ${userName}]]>
+		</if>
+	</select>
+	<select id="getUserListByNoAdmin" resultMap="userMap">
+		SELECT
+			*
+		FROM
+			t_sys_user
+		WHERE
+			id NOT IN (
+				SELECT DISTINCT
+					uid
+				FROM
+					r_sys_role_user
+				WHERE
+					role_id IN (
+						SELECT
+							id
+						FROM
+							t_sys_role
+						WHERE
+							role_name = 'administrator'
+					)
+			)
+			<if test="name != null and name != '' ">
+				and (
+					name like CONCAT('%', #{name} ,'%')
+					or phone like CONCAT('%', #{name} ,'%')
+					or real_name like CONCAT('%', #{name} ,'%')
+				)
+			</if>
+			<if test="schoolId != null">
+				and (
+					school_id = #{schoolId} 
+				)
+			</if>
+			and status != 2
+			order by createtime desc
+	</select>
+	<resultMap id="userRolle" type="com.cdyykj.system.response.SystemUserRoleResponse">
+		<result column="userId" property="userId"/>
+		<result column="userName" property="userName"/>
+		<result column="phone" property="phone"/>
+		<result column="userStatus" property="userStatus"/>
+		<result column="schoolId" property="schoolId"/>
+		<result column="realName" property="realName"/>
+		<result column="schoolJobId" property="schoolJobId"/>
+		<result column="createtime" property="createtime"/>
+		<result column="avatarUrl" property="avatarUrl"/>
+		<result column="sex" property="sex"/>
+		<collection property="systemRoles" ofType="com.cdyykj.system.entity.SystemRole">
+			<result column="roleId" property="id"/>
+			<result column="roleName" property="roleName"/>
+			<result column="roleCode" property="roleCode"/>
+		</collection>
+	</resultMap>
+	<select id="getSystemUserBySearch" resultMap="userRolle">
+SELECT
+	tsu.name as userName,
+	tsu.phone,
+	tsu.id as userId,
+	tsu.`status` as userStatus,
+	GROUP_CONCAT(tsr.role_name SEPARATOR ',')  roleName,
+	tsr.role_code as roleCode,
+	tsr.id as roleId,
+	tsu.school_id as schoolId,
+	tsu.real_name as realName,
+	tsu.createtime
+FROM
+	t_sys_user tsu
+	LEFT JOIN r_sys_role_user rsru ON tsu.id = rsru.uid
+	LEFT JOIN t_sys_role tsr ON tsr.id = rsru.role_id
+WHERE
+ tsr.status=0
+<if test="roleCodes !=null">
+and tsr.role_code in
+	<foreach collection="roleCodes" item="roleCode" open="(" close=")" separator=",">
+		#{roleCode}
+	</foreach>
+</if>
+<if test="search !=null">
+	and (
+	tsu.real_name LIKE #{search}
+    or tsu.name like #{search}
+	)
+</if>
+		GROUP BY tsu.id
+		order by tsu.id desc
+	</select>
+	<select id="getSystemUserRoleResponseById" resultMap="userRolle">
+		SELECT
+	tsu.name as userName,
+	tsu.phone,
+	tsu.id as userId,
+	tsu.`status` as userStatus,
+	tsr.role_name roleName,
+	tsr.role_code as roleCode,
+	tsr.id as roleId,
+	tsu.school_id as schoolId,
+	tsu.real_name as realName,
+	tsu.school_job_id as schoolJobId,
+	tsu.avatar_url as avatarUrl,
+	tsu.sex
+FROM
+	t_sys_user tsu
+	LEFT JOIN r_sys_role_user rsru ON tsu.id = rsru.uid
+	LEFT JOIN t_sys_role tsr ON tsr.id = rsru.role_id
+WHERE
+tsu.status=0
+and tsu.id=#{userId}
+	</select>
+	<select id="selectByRoleCodeAndSchoolId" resultType="com.cdyykj.system.entity.SystemUser">
+		SELECT tsu.* FROM `r_sys_role_user`rsru
+        left join t_sys_user tsu on tsu.id=rsru.uid
+        left join t_sys_role tsr on tsr.id=rsru.role_id
+        where tsr.school_id=#{schoolId}
+        and tsr.role_code = #{roleCode}
+        and tsu.status=0
+	</select>
+
+	<select id="selectAllUserPhone" resultType="java.lang.String">
+		SELECT
+		tsu.phone
+		FROM
+		t_sys_user tsu
+	</select>
+	<select id="selectTeacher" resultType="com.cdyykj.system.entity.SystemUser">
+		select tsu.* from t_sys_user tsu left join t_school ts on tsu.school_id=ts.id
+		where tsu.is_teacher=1
+		and ts.code=#{schoolCode}
+		and ts.status=0
+		and tsu.phone=#{phone}
+	</select>
+	<select id="getUserByName" resultType="com.cdyykj.system.entity.SystemUser">
+		select * from t_sys_user tsu
+		where tsu.name =#{userName}
+		and tsu.status=0
+
+	</select>
+</mapper>

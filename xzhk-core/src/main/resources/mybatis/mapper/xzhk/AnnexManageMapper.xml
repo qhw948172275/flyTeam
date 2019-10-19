@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdyykj.xzhk.dao.AnnexManageMapper" >
+  <resultMap id="BaseResultMap" type="com.cdyykj.xzhk.entity.AnnexManage" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="article_id" property="articleId" jdbcType="INTEGER" />
+  </resultMap>
+
+  <select id="selectAnnexManage" resultType="com.cdyykj.xzhk.entity.AnnexManage">
+     select tam.* from t_annex_manage tam left join  r_annex_apply raa on tam.id=raa.annex_id
+     where raa.apply_id=#{applyId} and raa.type=#{type}
+  </select>
+</mapper>

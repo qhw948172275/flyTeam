@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdyykj.xzhk.dao.DoRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.cdyykj.xzhk.entity.DoRecord" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="member_id" property="memberId" jdbcType="INTEGER" />
+    <result column="marks" property="marks" jdbcType="INTEGER" />
+    <result column="right_count" property="rightCount" jdbcType="TINYINT" />
+    <result column="error_count" property="errorCount" jdbcType="TINYINT" />
+    <result column="test_system_id" property="testSystemId" jdbcType="INTEGER" />
+    <result column="t_test_system_id" property="tTestSystemId" jdbcType="INTEGER" />
+  </resultMap>
+
+  <select id="selectDoRecordResponseTwo" resultType="com.cdyykj.xzhk.response.DoRecordResponse">
+      SELECT
+      tdr.*,
+      ttt.dptName dptName,
+      ttt.`name` memberName
+      FROM
+      t_do_record tdr
+      LEFT JOIN  (select tdm.id,tdm.`name` ,GROUP_CONCAT( td.`name`) dptName from t_department_member tdm 	LEFT JOIN r_department_member rdm ON rdm.member_id = tdm.id
+      LEFT JOIN t_department td ON td.id = rdm.department_id
+      GROUP BY tdm.id) ttt
+      on ttt.id=tdr.member_id
+      WHERE
+      tdr.test_system_id = #{testSystemId}
+      <if test="keyword !=null">
+          and (ttt.name like #{keyword} or ttt.dptName like #{keyword})
+      </if>
+      <if test="ids !=null">
+          and tdr.id in
+          <foreach collection="ids" item="id" open="(" separator="," close=")">
+              #{id}
+          </foreach>
+      </if>
+      GROUP BY ttt.id
+      order by tdr.marks desc
+
+  </select>
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdyykj.xzhk.dao.DepartmentMemberMapper" >
+  <resultMap id="BaseResultMap" type="com.cdyykj.xzhk.entity.DepartmentMember" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="order" property="order" jdbcType="INTEGER" />
+    <result column="position" property="position" jdbcType="VARCHAR" />
+    <result column="gender" property="gender" jdbcType="TINYINT" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="is_leader_in_dept" property="isLeaderInDept" jdbcType="TINYINT" />
+    <result column="avatar" property="avatar" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteAll">
+    delete from t_department_member
+  </delete>
+
+  <select id="selectListByLevelPath" resultType="com.cdyykj.xzhk.response.DepartmentMemberResponse">
+     select tdm.*,GROUP_CONCAT(td.`name`) dptNames from t_department_member tdm left join r_department_member rdm on tdm.id=rdm.member_id
+left join t_department td on td.id=rdm.department_id
+
+where
+ td.level_path like  #{levelPath}
+group by tdm.id
+order by rdm.mb_order
+  </select>
+  <select id="searchKeyword" resultType="com.cdyykj.xzhk.response.DepartmentMemberResponse">
+    select tdm.*,GROUP_CONCAT(td.`name`) dptNames from t_department_member tdm left join r_department_member rdm on tdm.id=rdm.member_id
+left join t_department td on td.id=rdm.department_id
+
+where 1=1
+<if test="keyword !=null">
+  and  tdm.name like  #{keyword}
+</if>
+group by tdm.id
+order by rdm.mb_order
+  </select>
+
+  <select id="selectMemberInfoResponse" resultType="com.cdyykj.xzhk.response.MemberInfoResponse">
+SELECT
+	tdm.*,
+	GROUP_CONCAT( td.`name` ) departmentName
+FROM
+	t_department_member tdm
+	LEFT JOIN r_department_member rdm ON rdm.member_id = tdm.id
+	LEFT JOIN t_department td ON td.id = rdm.department_id
+WHERE
+	tdm.id =#{memberId}
+  </select>
+  <insert id="insertListById" >
+    INSERT INTO `xzhk`.`t_department_member`(`id`, `user_id`, `name`, `mobile`, `position`, `gender`, `avatar`, `status`)
+    VALUES
+    <foreach collection="oldDepartmentMembers" item="oldDepartmentMember" separator="," >
+      (#{oldDepartmentMember.id},#{oldDepartmentMember.userId},#{oldDepartmentMember.name},#{oldDepartmentMember.mobile},
+      #{oldDepartmentMember.position},#{oldDepartmentMember.gender},#{oldDepartmentMember.avatar},#{oldDepartmentMember.status})
+    </foreach>
+  </insert>
+
+  <select id="selectUserId" resultType="java.lang.String">
+   SELECT
+	tdm.user_id
+FROM
+	t_department_member tdm
+WHERE
+	EXISTS (
+SELECT
+	tsu.NAME
+FROM
+	t_sys_user tsu
+	LEFT JOIN r_sys_role_user rsru ON rsru.uid = tsu.id
+WHERE
+	EXISTS ( SELECT id FROM t_sys_role tsr WHERE tsr.`status` = 0 AND rsru.role_id = tsr.id )
+	AND tdm.mobile = tsu.NAME
+	)
+
+  </select>
+</mapper>

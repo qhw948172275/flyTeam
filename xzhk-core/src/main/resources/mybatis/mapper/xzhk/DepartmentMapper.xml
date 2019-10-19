@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdyykj.xzhk.dao.DepartmentMapper" >
+  <resultMap id="BaseResultMap" type="com.cdyykj.xzhk.entity.Department" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="dp_order" property="DpOrder" jdbcType="TINYINT" />
+  </resultMap>
+  <delete id="deleteAll">
+    delete from t_department
+  </delete>
+  <insert id="insertListFor">
+    INSERT INTO t_department  ( id,`name`,parent_id,dp_order,level_path )  VALUES
+    <foreach collection="departments" item="department" separator="," >
+      (#{department.id},#{department.name},#{department.parentId},#{department.dpOrder},#{department.levelPath})
+    </foreach>
+  </insert>
+
+  <resultMap id="rpdtMap" type="com.cdyykj.xzhk.response.RDepartmentMemberResponseDto">
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="dp_order" property="DpOrder" jdbcType="TINYINT" />
+    <result column="level_path" property="levelPath" jdbcType="TINYINT" />
+   <collection property="departmentMembers" ofType="com.cdyykj.xzhk.entity.DepartmentMember">
+     <id column="memberId" property="id" jdbcType="INTEGER" />
+     <result column="user_id" property="userId" jdbcType="INTEGER" />
+     <result column="memberName" property="name" jdbcType="VARCHAR" />
+     <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+     <result column="position" property="position" jdbcType="VARCHAR" />
+     <result column="gender" property="gender" jdbcType="TINYINT" />
+     <result column="email" property="email" jdbcType="VARCHAR" />
+     <result column="is_leader_in_dept" property="isLeaderInDept" jdbcType="TINYINT" />
+     <result column="avatar" property="avatar" jdbcType="VARCHAR" />
+     <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+     <result column="status" property="status" jdbcType="TINYINT" />
+   </collection>
+  </resultMap>
+
+  <select id="selectRDepartmentMemberResponse" resultMap="rpdtMap">
+  SELECT
+	td.*,
+	tdm.id memberId,
+	tdm.name memberName,
+	tdm.user_id,
+	tdm.telephone,
+	tdm.`status`,
+	tdm.position,
+	tdm.mobile,
+	tdm.is_leader_in_dept,
+	tdm.email
+FROM
+	t_department td
+	LEFT JOIN r_department_member rdm ON td.id = rdm.department_id
+	LEFT JOIN t_department_member tdm ON tdm.id = rdm.member_id
+	where td.parent_id !=0
+  </select>
+    <select id="selectRDepartmentMemberResponseParent" resultMap="rpdtMap">
+        SELECT
+	td.*,
+	tdm.id memberId,
+	tdm.name memberName,
+	tdm.user_id,
+	tdm.telephone,
+	tdm.`status`,
+	tdm.position,
+	tdm.mobile,
+	tdm.is_leader_in_dept,
+	tdm.email
+FROM
+	t_department td
+	LEFT JOIN r_department_member rdm ON td.id = rdm.department_id
+	LEFT JOIN t_department_member tdm ON tdm.id = rdm.member_id
+	where td.parent_id = 0
+    </select>
+</mapper>

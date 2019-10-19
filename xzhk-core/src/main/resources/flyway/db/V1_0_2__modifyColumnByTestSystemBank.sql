@@ -1,0 +1,1 @@
+RENAME TABLE `xzhk`.`r_test_system_question_brank` TO `xzhk`.`r_test_system_question_bank`;

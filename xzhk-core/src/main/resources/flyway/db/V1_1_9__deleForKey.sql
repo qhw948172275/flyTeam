@@ -1,0 +1,1 @@
+ALTER TABLE `xzhk`.`r_member_article` DROP FOREIGN KEY `fk_r_member_article_t_department_member`;
