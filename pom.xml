@@ -28,7 +28,7 @@
         <aliyun-java-sdk-core.version>3.2.3</aliyun-java-sdk-core.version>
         <aliyun-java-sdk-dysmsapi.version>1.0.0</aliyun-java-sdk-dysmsapi.version>
         <alipay-sdk-java.version>3.3.4.ALL</alipay-sdk-java.version>
-        <commons-fileupload.version>1.3.3</commons-fileupload.version>
+        <commons-fileupload.version>1.5</commons-fileupload.version>
         <commons-beanutils.version>1.9.3</commons-beanutils.version>
         <flyway.version>5.0.7</flyway.version>
         <commons-lang3.version>3.3.2</commons-lang3.version>
